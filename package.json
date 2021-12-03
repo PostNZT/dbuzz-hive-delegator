@@ -1,0 +1,29 @@
+{
+  "name": "dbuzz-hive-delegator",
+  "version": "1.0.0",
+  "description": "DBuzz Decentralize application for Hiveonboard delagations manager for new users",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PostNZT/dbuzz-hive-delegator.git"
+  },
+  "keywords": [
+    "hive"
+  ],
+  "author": "Jhune Carlo Trogelio",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/PostNZT/dbuzz-hive-delegator/issues"
+  },
+  "homepage": "https://github.com/PostNZT/dbuzz-hive-delegator#readme",
+  "dependencies": {
+    "@hiveio/dhive": "^1.1.1",
+    "@hiveio/hive-js": "^2.0.4",
+    "@splinterlands/hive-interface": "^1.1.1",
+    "axios": "^0.24.0",
+    "dotenv": "^10.0.0"
+  }
+}
