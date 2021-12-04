@@ -25,5 +25,10 @@
     "@splinterlands/hive-interface": "^1.1.1",
     "axios": "^0.24.0",
     "dotenv": "^10.0.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.16.0",
+    "@babel/core": "^7.16.0",
+    "@babel/preset-env": "^7.16.4"
   }
 }
