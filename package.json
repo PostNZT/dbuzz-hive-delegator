@@ -4,6 +4,8 @@
   "description": "DBuzz Decentralize application for Hiveonboard delagations manager for new users",
   "main": "index.js",
   "scripts": {
+    "init": "node ./init.js",
+    "serve": "node ./src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
