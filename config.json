@@ -1,0 +1,19 @@
+{
+    "referrerAccount": "dbuzz",
+    "delegationAccount": "dbuzz",
+    "delegationAmount": 10,
+    "delegationLength": 30,
+    "benefeciaryRemoval": true,
+    "checkCycleMinutes": 30,
+    "minimumPostRC": 30,
+    "muteAccount": "dbuzz",
+    "hivePowerWarning": "150",
+    "maximumUserHivePower": 30,
+    "adminAccount": "posnzt",
+    "notifyUser": "true",
+    "delegationMessage": "Hi, welcome to Hive family. You have received a delegation from DBuzz https://d.buzz and hoping you enjoy your stay with the community.",
+    "delegationLengthMessage": "Hi, the HP delegated to you will be revoked since the delegation now exceeds 30 days.",
+    "delegationMuteMessage": "Hi, the HP delegated to you will be revoked since you have been muted by DBuzz. If you have any concer, please do reach out @dbuzz",
+    "delegationBenefeciaryMessage": "Hi, the HP delegated to you will be revoked since you have removed the default benefeciary settings to @dbuzz",
+    "delegationMaximumMessage": "Hi, the HP delegated to you will be revoked since you already have at least 30HP which is enough for your stay at Hive."
+}
