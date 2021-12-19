@@ -1,4 +1,8 @@
+import fs from 'fs'
+import { getReferredAccounts } from '../components/onboard'
 import hiveInterface from '../config/hiveInterface'
+
+const userDataFile = 'users.json'
 
 export async function streamOperations(callbacks, options = {}) {
     return await hiveInterface.stream({
@@ -40,4 +44,38 @@ export function getOperationWorker(op) {
         default: 
             return null
     }
+}
+
+export function saveReferredUsers(users) {
+    /**
+     * @description => Save referred accounts into file.
+     */
+    fs.writeFileSync(userDataFile, JSON.stringify(users, null, 2))
+    console.log(`Saved user data to: `, userDataFile)
+}
+
+function loadReferredUsers() {
+    let users = {}
+    if (fs.existsSync(userDataFile)) {
+        const text = fs.readFileSync(userDataFile)
+        if (text && text.length > 0) {
+            users = JSON.parse(text)
+        }
+    }
+
+    return users
+}
+
+
+export function addToReferredUsers(users) {
+    let usersMap = {}
+    for (let user of users) {
+        usersMap[user.account] = user
+    }
+
+    const loaded = loadReferredUsers()
+    const newUsers = { ...loaded, ...usersMap }
+    saveReferredUsers(newUsers)
+
+    return newUsers
 }
