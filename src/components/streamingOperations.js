@@ -26,3 +26,14 @@ export function whenReferredUserCreated(op) {
         }
     }
 }
+
+export async function whenReferredUserTakeActions(op) {
+    const name = op.op[0]
+    if (['comment', 'vote', 'transfer', 'custom_json'].includes(name)) {
+        const users = await getInactiveUsers()
+        if (users.includes(username)) {
+            console.log(`@${username} has performed [${name}] operation at ${op.timestamp}`)
+            delegateToUser(username)
+        }
+    }
+}
