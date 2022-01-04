@@ -1,9 +1,8 @@
 import config from '../../config.json'
-import { containsUser, updateUser } from '../services/helper'
-import { hasBeneficiarySetting } from './account'
+import { containsUser, updateUser, hasBeneficiarySetting } from '../services/helper'
 
 /**
- * @description => Streaming operation and listen to account creation operation 
+ * @description Streaming operation and listen to account creation operation 
  */
 
 export function whenReferredUserCreated(op) {
