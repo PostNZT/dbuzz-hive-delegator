@@ -1,6 +1,6 @@
 import fs from 'fs'
-import { getReferredAccounts } from '../components/onboard'
 import hiveInterface from '../config/hiveInterface'
+import { hasDelegatedTo, hasEnoughHP } from '../services/helper'
 
 const userDataFile = 'users.json'
 
@@ -78,4 +78,13 @@ export function addToReferredUsers(users) {
     saveReferredUsers(newUsers)
 
     return newUsers
+}
+
+/**
+ * @description delegate to user
+ */
+export async function delegateToUser(username) {
+    if (!await hasDelegatedTo(username) && !await hasEnoughHP(username)) {
+        
+    }
 }
