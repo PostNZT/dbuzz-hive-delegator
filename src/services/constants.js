@@ -89,4 +89,13 @@ export const RESOURCE_EXECUTION_TIME = {
     "withdraw_vesting_operation_exec_time": 10400,
     "witness_set_properties_operation_exec_time": 9500,
     "witness_update_operation_exec_time": 9500
-  }
+}
+
+export const STATUS = {
+    INACTIVE: 'inactive', // default
+    DELEGATED: 'delegated',
+    MUTED: 'muted',
+    EXPIRED: 'expired',
+    BENEFICIARY_REMOVED: 'benificiary_removed',
+    GRADUATED: 'graduated'
+}
