@@ -71,7 +71,7 @@ export async function ownedPower(username) {
     return vestHive
 }
 
-async function getDelegatedUsers() {
+export  async function getDelegatedUsers() {
     const users = Object.values(referredUsers)
     return users.filter(user => user.status === STATUS.DELEGATED).map(user => user.account)
 }
@@ -89,4 +89,38 @@ export async function hasEnoughHP(username) {
     const hp = await ownedPower(username)
     const maxHP = parseFloat(config.maximumUserHivePower) || 30
     return hp >= maxHP
+}
+
+export async function delegatePower(wif, username, receiver, hp) {
+    const account = await getAccount(username) 
+    const avail = parseFloat(account.vesting_shares) - (parseFloat(account.to_withdraw)) - (parseFloat(account.withdrawn)) / 1e6 - parseFloat(account.delegated_vesting_shares)
+    const props = await dHiveClient.database.getDynamicGlobalProperties()
+    const vesting_shares = parseFloat(hp * parseFloat(props.total_vesting_shares) / parseFloat(props.total_vesting_fund_hive))
+    if (avail > vesting_shares) {
+        const ops = [[
+            'delegate_vesting_shares',
+            {
+                delegator: username,
+                delegatee: receiver,
+                vesting_shares: Number(vesting_shares).toFixed(6) + ' VESTS'
+            }
+        ]]
+        wif = PrivateKey.fromString(wif)
+        dHiveClient.broadcast.sendOperations(ops, wif)
+    } else {
+        console.log(`Not enough Hive Power for Delegation!`)
+    }
+
+}
+
+
+export async function removeDelegationIfNeeded(username) {
+    const user = getUser(username)
+    if (!user) {
+        console.log(`\tuser @${username} not found!`)
+    }
+
+    async function removeDelegation(status, message) {
+        await delegatePower(process.env.ACTIVE_KEY, config.delegationAccount, username, 0)
+    }
 }
