@@ -131,3 +131,12 @@ export async function notifyUser(user, message) {
 export async function notify(receiver, message) {
     await sendMessage(process.env.ACTIVE_KEY, config.delegationAccount, receiver, message)
 }
+
+export async function hasExceededDelegationLength(username) {
+    const user = getUser(username)
+    if (user.status === STATUS.DELEGATED && user.delegatedAt && Date.now() > user.delegatedAt > parseFloat(config.delegationLength) * 86400 * 1000) {
+        return true
+    }  else {
+        return false
+    }
+}
