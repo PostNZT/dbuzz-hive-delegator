@@ -1,6 +1,18 @@
 import fs from 'fs'
+import config from '../../config.json'
 import hiveInterface from '../config/hiveInterface'
-import { hasDelegatedTo, hasEnoughHP } from '../services/helper'
+import { 
+    hasDelegatedTo, 
+    hasEnoughHP,
+    delegatePower,
+    getUser,
+    updateUser,
+    hasNoRC,
+    isMuted,
+    isTrue,
+    hasSetBeneficiary,
+    notifyUser
+} from '../services/helper'
 
 const userDataFile = 'users.json'
 
@@ -84,7 +96,33 @@ export function addToReferredUsers(users) {
  * @description delegate to user
  */
 export async function delegateToUser(username) {
-    if (!await hasDelegatedTo(username) && !await hasEnoughHP(username)) {
-        
+    if (!await hasDelegatedTo(username) && !await hasEnoughHP(username) 
+        && await hasNoRC(username) && !await isMuted(username) 
+        && (!isTrue(config.beneficiaryRemoval) || await hasSetBeneficiary(username))) 
+    {
+
+    }
+}
+
+
+export async function removeDelegationIfNeeded(username) {
+    const user = getUser(username)
+    if (!user) {
+        console.log(`\tuser @${username} not found!`)
+    }
+
+    async function removeDelegation(status, message) {
+        await delegatePower(process.env.ACTIVE_KEY, config.delegationAccount, username, 0)
+        user.status = status 
+        user.delegationRemovedAt = Date.now()
+        updateUser(user)
+        console.log(`\tremoved delegation to @${username}; changed status to ${status}`)
+        await notifyUser(username, message)
+    }
+
+    if (await hasEnoughHP(username)) {
+        await removeDelegation(STATUS.GRADUATED, config.delegationMuteMessage)
+    } else if (await isMuted(username)) {
+        await removeDelegation()
     }
 }
