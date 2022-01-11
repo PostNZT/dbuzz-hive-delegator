@@ -1,5 +1,5 @@
 import { STATUS } from '../services/constants'
-import hiveClient from '../config/hive'
+import { getAccount } from '../components/profile'
 import dHiveClient from '../config/dHive'
 import config from '../../config.json'
 import { addToReferredUsers } from '../services/api'
@@ -44,22 +44,6 @@ export function hasBeneficiarySetting(account, referrer) {
     }
 
     return false
-}
-
-export async function getAccount(account) {
-    return new Promise((resolve, reject) => {
-        hiveClient.api.getAccounts([account], function (err, res) {
-            if (err) {
-                reject(err)
-            } else {
-                if (res && res.length > 0) {
-                    resolve(res[0])
-                } else {
-                    resolve({})
-                }
-            }
-        })
-    })
 }
 
 export async function ownedPower(username) {
@@ -113,14 +97,37 @@ export async function delegatePower(wif, username, receiver, hp) {
 
 }
 
+export async function hasNoRC(username) {
+    const rc = await getAccountRC(username)
+    const minComments = parseFloat(config.minimumPostRC) || 3
 
-export async function removeDelegationIfNeeded(username) {
-    const user = getUser(username)
-    if (!user) {
-        console.log(`\tuser @${username} not found!`)
-    }
+    return rc && rc < minComments * commentRcCost
+}
 
-    async function removeDelegation(status, message) {
-        await delegatePower(process.env.ACTIVE_KEY, config.delegationAccount, username, 0)
+export async function isMuted(username) {
+    if (config.muteAccount) {
+        const blacklist = await getMutedAccounts(config.muteAccount)
+        return blacklist.includes(username)
+    } else {
+        return false
     }
+}
+
+export function isTrue(setting) {
+    return setting && ('' + setting).toLowerCase() === 'true'
+}
+
+export async function hasSetBeneficiary(username) {
+    const account = await getAccount(username)
+    return hasBeneficiarySetting(account, config.referrerAccount)
+}
+
+export async function notifyUser(user, message) {
+    if (isTrue(config.notifyUser)) {
+        await notify(user, message)
+    }
+}
+
+export async function notify(receiver, message) {
+    await sendMessage(process.env.ACTIVE_KEY, config.delegationAccount, receiver, message)
 }
