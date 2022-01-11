@@ -1,4 +1,4 @@
-import { streamOperations } from './services/api'
+import { streamOperations, removeDelegationIfNeeded } from './services/api'
 import { getDelegatedUsers } from './services/helper'
 import { whenReferredUserCreated, whenReferredUserTakeActions } from './components/streamingOperations'
  
