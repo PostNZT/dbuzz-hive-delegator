@@ -4,7 +4,6 @@ import hiveInterface from '../config/hiveInterface'
 import { 
     hasDelegatedTo, 
     hasEnoughHP,
-    delegatePower,
     getUser,
     updateUser,
     hasNoRC,
@@ -12,8 +11,11 @@ import {
     isTrue,
     hasSetBeneficiary,
     notifyUser,
-    hasExceededDelegationLength
+    notifyAdmin,
+    hasExceededDelegationLength,
+    hasBeneficiarySetting
 } from '../services/helper'
+import { delegatePower } from '../components/profile'
 import { STATUS } from './constants'
 
 const userDataFile = 'users.json'
@@ -102,8 +104,15 @@ export async function delegateToUser(username) {
         && await hasNoRC(username) && !await isMuted(username) 
         && (!isTrue(config.beneficiaryRemoval) || await hasSetBeneficiary(username))) 
     {
-
+        console.log(`Delege ${config.delegationAmount} HP to @${username}`)
+        try {
+            await delegatePower(process.env.ACTIVE_KEY, config.delegationAccount, username, parseFloat(config.delegationAmount))
+        } catch (e) {
+            notifyAdmin(`Delegation Manager: Failed to delegate Hive Power to @${username}. Error = ${e.message}`)
+        }
     }
+
+    
 }
 
 
@@ -128,5 +137,9 @@ export async function removeDelegationIfNeeded(username) {
         await removeDelegation(STATUS.MUTED, config.delegationMuteMessage)
     } else if (await hasExceededDelegationLength(username)) {
         await removeDelegation(STATUS.EXPIRED, config.delegationLengthMessage)
+    } else if (isTrue(config.benefeciaryRemoval) && !await hasBeneficiarySetting(username)) {
+        await removeDelegation(STATUS.BENEFICIARY_REMOVED, config.delegationBenefeciaryMessage)
+    } else {
+        console.log(`\t Keeped the delegation to @${username}`)
     }
 }
