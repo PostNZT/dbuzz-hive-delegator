@@ -72,3 +72,25 @@ export async function sendMessage(wif, from, to, message) {
         memo: message
     }, PrivateKey.fromString(wif))
 }
+
+export async function delegatePower(wif, username, receiver, hp) {
+    const account = await getAccount(username) 
+    const avail = parseFloat(account.vesting_shares) - (parseFloat(account.to_withdraw)) - (parseFloat(account.withdrawn)) / 1e6 - parseFloat(account.delegated_vesting_shares)
+    const props = await dHiveClient.database.getDynamicGlobalProperties()
+    const vesting_shares = parseFloat(hp * parseFloat(props.total_vesting_shares) / parseFloat(props.total_vesting_fund_hive))
+    if (avail > vesting_shares) {
+        const ops = [[
+            'delegate_vesting_shares',
+            {
+                delegator: username,
+                delegatee: receiver,
+                vesting_shares: Number(vesting_shares).toFixed(6) + ' VESTS'
+            }
+        ]]
+        wif = PrivateKey.fromString(wif)
+        dHiveClient.broadcast.sendOperations(ops, wif)
+    } else {
+        console.log(`Not enough Hive Power for Delegation!`)
+    }
+
+}
