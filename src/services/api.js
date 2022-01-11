@@ -11,8 +11,10 @@ import {
     isMuted,
     isTrue,
     hasSetBeneficiary,
-    notifyUser
+    notifyUser,
+    hasExceededDelegationLength
 } from '../services/helper'
+import { STATUS } from './constants'
 
 const userDataFile = 'users.json'
 
@@ -121,8 +123,10 @@ export async function removeDelegationIfNeeded(username) {
     }
 
     if (await hasEnoughHP(username)) {
-        await removeDelegation(STATUS.GRADUATED, config.delegationMuteMessage)
+        await removeDelegation(STATUS.GRADUATED, config.delegationMaximumMessage)
     } else if (await isMuted(username)) {
-        await removeDelegation()
+        await removeDelegation(STATUS.MUTED, config.delegationMuteMessage)
+    } else if (await hasExceededDelegationLength(username)) {
+        await removeDelegation(STATUS.EXPIRED, config.delegationLengthMessage)
     }
 }
