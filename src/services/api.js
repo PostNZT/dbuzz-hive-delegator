@@ -5,7 +5,6 @@ import {
     hasDelegatedTo, 
     hasEnoughHP,
     getUser,
-    updateUser,
     hasNoRC,
     isMuted,
     isTrue,
@@ -13,10 +12,12 @@ import {
     notifyUser,
     notifyAdmin,
     hasExceededDelegationLength,
-    hasBeneficiarySetting
+    hasBeneficiarySetting,
+    notify
 } from '../services/helper'
 import { delegatePower } from '../components/profile'
 import { STATUS } from './constants'
+import { updateUser } from '../components/profile'
 
 const userDataFile = 'users.json'
 
@@ -70,7 +71,7 @@ export function saveReferredUsers(users) {
     console.log(`Saved user data to: `, userDataFile)
 }
 
-function loadReferredUsers() {
+export function loadReferredUsers() {
     let users = {}
     if (fs.existsSync(userDataFile)) {
         const text = fs.readFileSync(userDataFile)
@@ -110,9 +111,17 @@ export async function delegateToUser(username) {
         } catch (e) {
             notifyAdmin(`Delegation Manager: Failed to delegate Hive Power to @${username}. Error = ${e.message}`)
         }
-    }
 
-    
+        const user = getUser(username)
+        if (user) {
+            user.status = STATUS.DELEGATED
+            user.delegatedAt = Date.now()
+            user.delegatedAmount = parseFloat(config.delegationAmount)
+            updateUser(user)
+        }
+
+        await notifyUser(username, config.delegationMessage)
+    }
 }
 
 
