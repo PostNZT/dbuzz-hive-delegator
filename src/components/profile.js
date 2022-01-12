@@ -4,6 +4,7 @@ import axios from 'axios'
 import { SCOT_API_HOST, HIVE_ENGINE_API_HOST } from '../config/config'
 import { parseNumber } from '../services/helper'
 import { PrivateKey } from '@hiveio/dhive'
+import { addToReferredUsers } from '../services/api'
 
 export async function getAccount(account) {
     return new Promise((resolve, reject) => {
@@ -93,4 +94,9 @@ export async function delegatePower(wif, username, receiver, hp) {
         console.log(`Not enough Hive Power for Delegation!`)
     }
 
+}
+
+export function updateUser(user) {
+    referredUsers = addToReferredUsers([user])
+    console.log(`Updated user data for ${user.account}`)
 }
